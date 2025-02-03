@@ -83,7 +83,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     // MongoDB Realm
-    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.3.0")
+//    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.3.0")
 //    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 //    implementation("io.realm.kotlin:library-sync:10.17.0")
 //    api("io.realm.kotlin:library-base:1.11.0")

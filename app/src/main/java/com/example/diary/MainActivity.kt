@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.diary.navigation.Screen
+import com.example.diary.navigation.SetUpNavGraph
 import com.example.diary.ui.theme.DiaryTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,13 +25,17 @@ class MainActivity : ComponentActivity() {
 //        enableEdgeToEdge()
         setContent {
             DiaryTheme {
-
-                Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
+                val navController = rememberNavController()
+                SetUpNavGraph(
+                    startDestination = Screen.Authentication.route,
+                    navController = navController
+                )
+                /*Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
                     Greeting(
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )
-                }
+                }*/
             }
         }
     }
