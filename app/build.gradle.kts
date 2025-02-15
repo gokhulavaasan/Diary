@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android") version "2.51" apply false
-    id("com.google.gms.google-services") version "4.3.15" apply false
+    id("com.google.gms.google-services")
 //    id("com.google.devtools.ksp") version "1.9.21-1.0.14" apply false
 //    id("io.realm.kotlin") version "1.11.0"
 }
@@ -66,10 +66,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.navigation:navigation-compose:2.6.0")
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
 
+    // When using the BoM, you don't specify versions in Firebase library dependencies
     // Firebase
-    implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
-    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-storage")
 
     // Room components
     implementation("androidx.room:room-runtime:2.5.2")
