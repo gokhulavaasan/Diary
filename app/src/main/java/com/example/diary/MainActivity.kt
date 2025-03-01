@@ -9,40 +9,42 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.example.diary.navigation.Screen
 import com.example.diary.navigation.SetUpNavGraph
 import com.example.diary.ui.theme.DiaryTheme
-import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.auth.FirebaseAuth
+import com.example.diary.util.Constants.auth
+import com.example.diary.util.Constants.user
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
     private var keepSplashOpened = true
-    private lateinit var auth: FirebaseAuth
+//    private lateinit var auth: FirebaseAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseApp.initializeApp(this)
-        installSplashScreen()
+        installSplashScreen().setKeepOnScreenCondition {
+            keepSplashOpened
+            false
+        }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 //        enableEdgeToEdge()
         auth = Firebase.auth
         setContent {
             DiaryTheme {
-
-                val user = auth.currentUser
+                user = auth.currentUser
                 val navController = rememberNavController()
-                if (user == null) {
-                    Log.d("user", "user is not signed")
-                    SetUpNavGraph(
-                        startDestination = Screen.Authentication.route,
-                        navController = navController
-                    )
-                }
-                Log.d("user", user?.displayName.toString())
+                SetUpNavGraph(
+                    startDestination = getStartRoute(),
+//                    startDestination = Screen.Authentication.route,
+                    navController = navController,
+                    onDataLoaded = {
+                        keepSplashOpened = false
+                    }
+                )
                 /*Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
                     Greeting(
                         name = "Android",
@@ -52,6 +54,15 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+fun getStartRoute(): String {
+    if (user == null) {
+        Log.d("usersignstatus", "user is not signed")
+        return Screen.Authentication.route
+    }
+    Log.d("username", user?.displayName.toString())
+    return Screen.Home.route
 }
 
 @Composable

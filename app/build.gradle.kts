@@ -73,6 +73,10 @@ dependencies {
     // Firebase
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-appcheck-debug")
+    implementation("com.google.firebase:firebase-appcheck-safetynet:16.1.2")
+    implementation("com.google.firebase:firebase-firestore")
+
 
     // Room components
     implementation("androidx.room:room-runtime:2.5.2")
@@ -84,14 +88,7 @@ dependencies {
 
     // Splash API
     implementation("androidx.core:core-splashscreen:1.0.1")
-
-    // MongoDB Realm
-//    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:5.3.0")
-//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-//    implementation("io.realm.kotlin:library-sync:10.17.0")
-//    api("io.realm.kotlin:library-base:1.11.0")
-//    implementation("io.realm.kotlin:library-base:1.11.0")
-
+    
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.48")
 //    ksp("com.google.dagger:hilt-compiler:2.48")
@@ -116,6 +113,5 @@ dependencies {
     implementation("com.github.stevdza-san:OneTapCompose:1.0.0")
 
     // Desugar JDK for newer Java APIs on older devices
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
-
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }

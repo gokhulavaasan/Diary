@@ -4,7 +4,6 @@ package com.example.diary.presentation.screens.auth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,7 +25,7 @@ import com.stevdzasan.onetap.OneTapSignInState
 fun AuthenticationContent(
     loadingState: Boolean,
     oneTapState: OneTapSignInState,
-    onButtonClicked: () -> Unit
+    onButtonClicked: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,

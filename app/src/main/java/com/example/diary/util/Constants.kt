@@ -1,8 +1,9 @@
 package com.example.diary.util
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+
 object Constants {
-    val APP_ID = "mydiaryapp-oxizx"
-    const val CLIENT_ID = ""
-
-
+    lateinit var auth: FirebaseAuth
+    var user: FirebaseUser? = null
 }
