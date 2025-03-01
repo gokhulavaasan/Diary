@@ -2,6 +2,7 @@ package com.example.diary.presentation.home.component
 
 import android.annotation.SuppressLint
 import android.os.Build
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +52,7 @@ fun DiaryHolder(
 ) {
     val localDensity = LocalDensity.current
     var componentState by remember { mutableStateOf(0.dp) }
+    var galleryOpened  by remember { mutableStateOf(false) }
     Row() {
         Spacer(Modifier.width(14.dp))
         Surface(
@@ -110,6 +113,26 @@ fun DiaryHolder(
                         fontSize = MaterialTheme.typography.bodyLarge.fontSize
                     )
                 )
+                if (diary.images.isNotEmpty()){
+                    TextButton(onClick = {
+                        galleryOpened = !galleryOpened
+                    }) {
+                        Text(
+                            text = if (galleryOpened)"Close Gallery" else "Show Gallery",
+                            style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
+                        )
+                    }
+                }
+                AnimatedVisibility(
+                    visible = galleryOpened
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Gallery(
+                            images = diary.images,
+                        )
+                    }
+
+                }
             }
         }
     }
