@@ -1,7 +1,6 @@
 package com.example.diary.presentation.home.component
 
 import android.annotation.SuppressLint
-import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,9 +33,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.diary.model.Diary
-import com.example.diary.model.Mood
-import com.example.diary.model.getDate
+import com.example.diary.domain.model.Diary
+import com.example.diary.domain.model.Mood
+import com.example.diary.domain.model.getDate
 import com.example.diary.ui.theme.Elevation.Level1
 import com.google.firebase.Timestamp
 import java.time.ZoneId
@@ -48,20 +46,20 @@ import java.util.Locale
 @Composable
 fun DiaryHolder(
     diary: Diary,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val localDensity = LocalDensity.current
     var componentState by remember { mutableStateOf(0.dp) }
-    var galleryOpened  by remember { mutableStateOf(false) }
-    Row() {
-        Spacer(Modifier.width(14.dp))
+    var galleryOpened by remember { mutableStateOf(false) }
+    Row {
+        Spacer(Modifier.width(5.dp))
         Surface(
             Modifier
                 .width(2.dp)
                 .height(componentState + 14.dp),
             tonalElevation = Level1
         ) {}
-        Spacer(Modifier.width(20.dp))
+        Spacer(Modifier.width(10.dp))
         Surface(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
@@ -106,19 +104,19 @@ fun DiaryHolder(
                 Text(
                     modifier = Modifier.padding(14.dp),
                     text = diary.description,
-                    color = mood.contentColor,
+                    color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.bodyLarge.fontSize
                     )
                 )
-                if (diary.images.isNotEmpty()){
+                if (diary.images.isNotEmpty()) {
                     TextButton(onClick = {
                         galleryOpened = !galleryOpened
                     }) {
                         Text(
-                            text = if (galleryOpened)"Close Gallery" else "Show Gallery",
+                            text = if (galleryOpened) "Close Gallery" else "Show Gallery",
                             style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
                         )
                     }
@@ -139,14 +137,6 @@ fun DiaryHolder(
 }
 
 
-/*
-@Preview
-@Composable
-private fun PreviewDateHandler(
-) {
-    val timestamp: Timestamp = Timestamp.now()
-    DateHeader(timestamp)
-}*/
 @Composable
 @Preview
 fun DiaryHolderPreview() {

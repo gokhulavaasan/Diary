@@ -5,11 +5,14 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -17,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.diary.presentation.home.HomeScreen
+import com.example.diary.presentation.home.HomeViewModel
 import com.example.diary.presentation.home.component.DisplayAlertDialog
 import com.example.diary.presentation.screens.auth.AuthenticationScreen
 import com.example.diary.presentation.screens.auth.AuthenticationViewModel
@@ -29,6 +33,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun SetUpNavGraph(
+    context: ViewModelStoreOwner,
     startDestination: String,
     navController: NavHostController,
     onDataLoaded: () -> Unit,
@@ -45,6 +50,7 @@ fun SetUpNavGraph(
             }
         )
         homeRoute(
+            context,
             onDataLoaded,
             navController = navController
         )
@@ -54,7 +60,7 @@ fun SetUpNavGraph(
 
 fun NavGraphBuilder.authenticationRoute(
     onDataLoaded: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
 ) {
     composable(route = Screen.Authentication.route) {
         val authViewModel: AuthenticationViewModel = viewModel()
@@ -99,18 +105,25 @@ fun NavGraphBuilder.authenticationRoute(
 }
 
 fun NavGraphBuilder.homeRoute(
+    context: ViewModelStoreOwner,
     onDataLoaded: () -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
     composable(route = Screen.Home.route) {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         var signOutDialogOpened by remember { mutableStateOf(false) }
         var deleteAllDialogOpened by remember { mutableStateOf(false) }
+//        val homeViewModel: HomeViewModel = viewModel(
+//            factory = HomeViewModelFactory(diaryUseCases)
+//        )
+        val homeViewModel: HomeViewModel = hiltViewModel()
+        val diaries by homeViewModel.diaries.collectAsState()
         LaunchedEffect(key1 = Unit) {
             onDataLoaded()
         }
         HomeScreen(
+            diaries = diaries,
             navigateToWrite = {
                 navController.popBackStack()
                 navController.navigate(Screen.Write.route)

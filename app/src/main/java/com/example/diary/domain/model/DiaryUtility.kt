@@ -1,4 +1,4 @@
-package com.example.diary.model
+package com.example.diary.domain.model
 
 import android.annotation.SuppressLint
 import java.time.Instant

@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar(menuClicked: () -> Unit) {
+fun HomeTopBar(
+    menuClicked: () -> Unit,
+) {
     TopAppBar(
         navigationIcon = {
             IconButton(

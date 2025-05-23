@@ -1,6 +1,7 @@
-package com.example.diary.model
+package com.example.diary.domain.model
 
 import com.google.firebase.Timestamp
+
 
 data class Diary(
     val id: String,
@@ -9,5 +10,5 @@ data class Diary(
     val title: String,
     val description: String,
     val images: List<String>,
-    val date: Timestamp
+    val date: Timestamp,
 )

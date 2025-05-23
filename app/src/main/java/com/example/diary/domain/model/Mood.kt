@@ -1,4 +1,4 @@
-package com.example.diary.model
+package com.example.diary.domain.model
 
 import androidx.compose.ui.graphics.Color
 import com.example.diary.R

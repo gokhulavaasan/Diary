@@ -18,7 +18,9 @@ import com.example.diary.util.Constants.auth
 import com.example.diary.util.Constants.user
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var keepSplashOpened = true
 //    private lateinit var auth: FirebaseAuth
@@ -28,7 +30,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen().setKeepOnScreenCondition {
             keepSplashOpened
-            false
         }
         WindowCompat.setDecorFitsSystemWindows(window, false)
 //        enableEdgeToEdge()
@@ -38,23 +39,18 @@ class MainActivity : ComponentActivity() {
                 user = auth.currentUser
                 val navController = rememberNavController()
                 SetUpNavGraph(
+                    context = this,
                     startDestination = getStartRoute(),
-//                    startDestination = Screen.Authentication.route,
                     navController = navController,
                     onDataLoaded = {
                         keepSplashOpened = false
                     }
                 )
-                /*Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }*/
             }
         }
     }
 }
+
 
 fun getStartRoute(): String {
     if (user == null) {

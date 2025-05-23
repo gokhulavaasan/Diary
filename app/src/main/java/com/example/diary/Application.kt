@@ -5,7 +5,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.initialize
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class Application : Application() {
     override fun onCreate() {
         Firebase.initialize(this)
