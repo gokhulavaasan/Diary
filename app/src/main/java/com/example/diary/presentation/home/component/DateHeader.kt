@@ -1,7 +1,5 @@
 package com.example.diary.presentation.home.component
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import java.time.LocalDate
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
 fun DateHeader(
     localDate: LocalDate,

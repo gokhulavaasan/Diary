@@ -1,6 +1,7 @@
 package com.example.diary.navigation
 
 import android.util.Log
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -17,14 +18,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.diary.domain.model.Diary
+import com.example.diary.domain.model.Mood
 import com.example.diary.presentation.home.HomeScreen
 import com.example.diary.presentation.home.HomeViewModel
 import com.example.diary.presentation.home.component.DisplayAlertDialog
 import com.example.diary.presentation.screens.auth.AuthenticationScreen
 import com.example.diary.presentation.screens.auth.AuthenticationViewModel
+import com.example.diary.presentation.write.WriteScreen
+import com.example.diary.presentation.write.WriteViewModel
 import com.example.diary.util.Constants.auth
+import com.example.diary.util.Constants.diaryId
+import com.google.firebase.Timestamp
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import kotlinx.coroutines.Dispatchers
@@ -52,9 +61,17 @@ fun SetUpNavGraph(
         homeRoute(
             context,
             onDataLoaded,
-            navController = navController
+            navController = navController,
+            navigateToWrite = {
+                navController.navigate(Screen.Write.route)
+            },
+            navigateToWriteWithArgs = {
+                navController.navigate(Screen.Write.passDiaryId(it))
+            },
         )
-        writeRoute()
+        writeRoute(onBackPressed = {
+            navController.popBackStack()
+        })
     }
 }
 
@@ -108,26 +125,27 @@ fun NavGraphBuilder.homeRoute(
     context: ViewModelStoreOwner,
     onDataLoaded: () -> Unit,
     navController: NavController,
+    navigateToWrite: () -> Unit,
+    navigateToWriteWithArgs: (String) -> Unit,
 ) {
     composable(route = Screen.Home.route) {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         var signOutDialogOpened by remember { mutableStateOf(false) }
         var deleteAllDialogOpened by remember { mutableStateOf(false) }
-//        val homeViewModel: HomeViewModel = viewModel(
-//            factory = HomeViewModelFactory(diaryUseCases)
-//        )
         val homeViewModel: HomeViewModel = hiltViewModel()
         val diaries by homeViewModel.diaries.collectAsState()
-        LaunchedEffect(key1 = Unit) {
-            onDataLoaded()
+        val isLoading by homeViewModel.isLoading.collectAsState()
+        LaunchedEffect(key1 = isLoading) {
+            if (isLoading != true) {
+                onDataLoaded()
+            }
+
         }
         HomeScreen(
             diaries = diaries,
-            navigateToWrite = {
-                navController.popBackStack()
-                navController.navigate(Screen.Write.route)
-            },
+            navigateToWrite = navigateToWrite,
+            navigateToWriteWithArgs = navigateToWriteWithArgs,
             drawerState = drawerState,
             onSignOutClicked = {
                 signOutDialogOpened = true
@@ -139,8 +157,10 @@ fun NavGraphBuilder.homeRoute(
                 scope.launch {
                     drawerState.open()
                 }
-            }
+            },
+            isLoading = isLoading
         )
+
         DisplayAlertDialog(
             title = "SIGN OUT",
             message = "Are you sure you want to Sign Out from your Google Account?",
@@ -164,8 +184,38 @@ fun NavGraphBuilder.homeRoute(
     }
 }
 
-fun NavGraphBuilder.writeRoute() {
-    composable(route = Screen.Write.route) {
+fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
+    composable(
+        route = Screen.Write.route,
+        arguments = listOf(navArgument(name = diaryId) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        })
+    ) {
+        val viewModel: WriteViewModel = hiltViewModel()
+        val uiState = viewModel.uiState
+        LaunchedEffect(key1 = uiState) {
+            Log.d("passed_id", "Passed Id ->${uiState.selectedDiaryId}")
+        }
 
+        val pagerState = rememberPagerState(
+            pageCount = { Mood.entries.size }
+        )
+        WriteScreen(
+            pagerState = pagerState,
+            onBackPressed = onBackPressed,
+            selectedDiary = diary,
+        )
     }
 }
+
+val diary = Diary(
+    id = "1234",
+    ownerId = "1234",
+    mood = Mood.Happy.name,
+    title = "LOREM IPSUM",
+    description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+    images = listOf("", ""),
+    date = Timestamp.now()
+)

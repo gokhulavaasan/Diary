@@ -23,7 +23,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         getDiaries()
-        _isLoading.value = true
     }
 
     fun getDiaries() {

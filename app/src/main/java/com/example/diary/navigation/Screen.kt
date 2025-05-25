@@ -1,9 +1,11 @@
 package com.example.diary.navigation
 
+import com.example.diary.util.Constants.diaryId
+
 sealed class Screen(val route: String) {
     object Authentication : Screen(route = "authentication_screen")
     object Home : Screen(route = "home_screen")
-    object Write : Screen(route = "write_screen?diaryId={diaryId}") {
+    object Write : Screen(route = "write_screen?$diaryId={$diaryId}") {
         fun passDiaryId(diaryId: String) = "write_screen?diaryId=$diaryId"
     }
 }
