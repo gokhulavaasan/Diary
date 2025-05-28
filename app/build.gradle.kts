@@ -44,6 +44,9 @@ android {
     buildFeatures {
         compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.11"
+    }
     kapt {
         correctErrorTypes = true
     }
@@ -126,6 +129,11 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+
+    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.1.1")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:calendar:1.1.1")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:clock:1.1.1")
 
 
 }

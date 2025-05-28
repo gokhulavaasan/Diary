@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface DiaryRepository {
-    fun getDiaries(): Flow<Resource<List<Diary>>>
-    suspend fun addDiary(entry: Diary): Resource<Unit>
+    suspend fun getDiaries(): Flow<Resource<List<Diary>>>
+    suspend fun insertDiary(entry: Diary): Flow<Resource<Diary>>
+    suspend fun getDiary(id: String): Flow<Resource<Diary>>
 }

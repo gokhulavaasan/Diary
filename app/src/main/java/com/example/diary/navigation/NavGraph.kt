@@ -1,6 +1,7 @@
 package com.example.diary.navigation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
@@ -12,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -192,20 +194,36 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
             nullable = true
             defaultValue = null
         })
-    ) {
-        val viewModel: WriteViewModel = hiltViewModel()
+    ) { navBackStackEntry ->
+        val viewModel: WriteViewModel = hiltViewModel(navBackStackEntry)
+        val context = LocalContext.current
         val uiState = viewModel.uiState
-        LaunchedEffect(key1 = uiState) {
-            Log.d("passed_id", "Passed Id ->${uiState.selectedDiaryId}")
-        }
-
         val pagerState = rememberPagerState(
             pageCount = { Mood.entries.size }
         )
         WriteScreen(
+            uiState = uiState,
             pagerState = pagerState,
             onBackPressed = onBackPressed,
-            selectedDiary = diary,
+            onTitleChanged = { viewModel.setTitle(title = it) },
+            onDescriptionChanged = { viewModel.setDescription(description = it) },
+            onDateTimeUpdated = { viewModel.updateDateTime(timeStamp = it) },
+            moodName = { Mood.entries[pagerState.currentPage].name },
+            onSaveClicked = {
+                viewModel.insertDiary(
+                    diary = it,
+                    onSuccess = {
+                        onBackPressed()
+                    },
+                    onError = { message ->
+                        Toast.makeText(
+                            context,
+                            message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
+            }
         )
     }
 }

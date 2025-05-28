@@ -34,17 +34,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.diary.domain.model.Diary
 import com.example.diary.domain.model.Mood
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
 
 @Composable
 fun WriteContent(
+    uiState: UiState,
     paddingValues: PaddingValues,
     pagerState: PagerState,
     title: String,
     onTitleChanged: (String) -> Unit,
     description: String,
     onDescriptionChanged: (String) -> Unit,
+    onSaveClicked: (Diary) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -143,7 +147,17 @@ fun WriteContent(
                     .fillMaxWidth()
                     .height(54.dp),
                 onClick = {
-
+                    onSaveClicked(
+                        Diary(
+                            id = "",
+                            ownerId = "",
+                            mood = Mood.entries[pagerState.currentPage].name,
+                            title = uiState.title,
+                            description = uiState.description,
+                            date = uiState.updatedDateTime ?: Timestamp.now(),
+                            images = emptyList()
+                        )
+                    )
                 },
                 shape = Shapes().small
             ) {

@@ -5,15 +5,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.diary.domain.model.Diary
 import com.example.diary.domain.model.Mood
+import com.example.diary.domain.usecases.DiaryUseCases
 import com.example.diary.util.Constants.diaryId
+import com.example.diary.util.Resource
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class WriteViewModel @Inject constructor(
+    private val diaryUseCases: DiaryUseCases,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -22,6 +29,34 @@ class WriteViewModel @Inject constructor(
 
     init {
         getDiaryArgument()
+        fetchSelectedDiary()
+    }
+
+    private fun fetchSelectedDiary() {
+        viewModelScope.launch {
+            diaryUseCases
+                .getDiary(uiState.selectedDiaryId.toString())
+                .collect() { result ->
+                    when (result) {
+                        is Resource.Error -> {
+
+                        }
+
+                        is Resource.Loading -> {}
+                        is Resource.Success -> {
+                            val diary = result.data
+                            if (diary != null) {
+                                uiState = uiState.copy(
+                                    selectedDiary = diary,
+                                    title = diary.title,
+                                    description = diary.description,
+                                    mood = Mood.valueOf(diary.mood),
+                                )
+                            }
+                        }
+                    }
+                }
+        }
     }
 
     private fun getDiaryArgument() {
@@ -30,6 +65,49 @@ class WriteViewModel @Inject constructor(
                 key = diaryId
             )
         )
+    }
+
+    private fun setSelectedDiary(diary: Diary) {
+        uiState = uiState.copy(selectedDiary = diary)
+    }
+
+    fun setTitle(title: String) {
+        uiState = uiState.copy(title = title)
+    }
+
+    fun setDescription(description: String) {
+        uiState = uiState.copy(description = description)
+    }
+
+    private fun setMood(mood: Mood) {
+        uiState = uiState.copy(mood = mood)
+    }
+
+    fun updateDateTime(timeStamp: Timestamp) {
+        uiState = uiState.copy(updatedDateTime = timeStamp)
+    }
+
+    fun insertDiary(
+        diary: Diary,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        viewModelScope.launch {
+            diaryUseCases.insertDiary(diary).collect { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        withContext(Dispatchers.Main) {
+                            onError(result.message.toString())
+                        }
+                    }
+
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        onSuccess()
+                    }
+                }
+            }
+        }
     }
 }
 

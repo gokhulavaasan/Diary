@@ -9,7 +9,15 @@ import javax.inject.Inject
 class DiaryUseCases @Inject constructor(
     val diaryRepository: DiaryRepository,
 ) {
-    fun getDiaries(): Flow<Resource<List<Diary>>> {
+    suspend fun getDiaries(): Flow<Resource<List<Diary>>> {
         return diaryRepository.getDiaries()
+    }
+
+    suspend fun getDiary(id: String): Flow<Resource<Diary>> {
+        return diaryRepository.getDiary(id)
+    }
+
+    suspend fun insertDiary(dairy: Diary): Flow<Resource<Diary>> {
+        return diaryRepository.insertDiary(dairy)
     }
 }
