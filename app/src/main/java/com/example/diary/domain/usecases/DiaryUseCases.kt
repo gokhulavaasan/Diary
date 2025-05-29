@@ -20,4 +20,12 @@ class DiaryUseCases @Inject constructor(
     suspend fun insertDiary(dairy: Diary): Flow<Resource<Diary>> {
         return diaryRepository.insertDiary(dairy)
     }
+
+    suspend fun updateDiary(dairy: Diary): Flow<Resource<Diary>> {
+        return diaryRepository.updateDiary(dairy)
+    }
+
+    suspend fun deleteDiary(dairyId: String): Flow<Resource<Boolean>> {
+        return diaryRepository.deleteDiary(dairyId)
+    }
 }

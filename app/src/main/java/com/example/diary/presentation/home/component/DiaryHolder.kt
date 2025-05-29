@@ -48,7 +48,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-@SuppressLint("NewApi")
+
 @Composable
 fun DiaryHolder(
     diary: Diary,

@@ -51,6 +51,7 @@ fun WriteTopBar(
     selectedDiary: Diary?,
     moodName: () -> String,
     onDateTimeUpdated: (Timestamp) -> Unit,
+    onDeleteClicked: () -> Unit,
 ) {
     var currentDate by remember {
         mutableStateOf(LocalDate.now())
@@ -127,7 +128,9 @@ fun WriteTopBar(
             if (selectedDiary != null) {
                 DeleteDiaryAction(
                     selectedDiary = selectedDiary,
-                    onDeleteConfirmed = {}
+                    onDeleteConfirmed = {
+                        onDeleteClicked()
+                    }
                 )
             }
         }
@@ -189,6 +192,7 @@ fun DeleteDiaryAction(
         message = "Are you sure you want to permanently delete this diary note '${selectedDiary?.title}'?",
         confirmButton = {
             onDeleteConfirmed()
+            openDialog = false
         },
         dialogOpened = openDialog,
         onDismissedButton = {
@@ -223,5 +227,6 @@ private fun PreviewWriteTopBar() {
         ),
         moodName = { "happy" },
         onDateTimeUpdated = { Timestamp.now() },
+        onDeleteClicked = {},
     )
 }

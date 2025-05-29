@@ -33,30 +33,30 @@ class WriteViewModel @Inject constructor(
     }
 
     private fun fetchSelectedDiary() {
-        viewModelScope.launch {
-            diaryUseCases
-                .getDiary(uiState.selectedDiaryId.toString())
-                .collect() { result ->
-                    when (result) {
-                        is Resource.Error -> {
-
-                        }
-
-                        is Resource.Loading -> {}
-                        is Resource.Success -> {
-                            val diary = result.data
-                            if (diary != null) {
-                                uiState = uiState.copy(
-                                    selectedDiary = diary,
-                                    title = diary.title,
-                                    description = diary.description,
-                                    mood = Mood.valueOf(diary.mood),
-                                )
+        if (uiState.selectedDiaryId != null) {
+            viewModelScope.launch {
+                diaryUseCases
+                    .getDiary(uiState.selectedDiaryId.toString())
+                    .collect() { result ->
+                        when (result) {
+                            is Resource.Error -> {}
+                            is Resource.Loading -> {}
+                            is Resource.Success -> {
+                                val diary = result.data
+                                if (diary != null) {
+                                    uiState = uiState.copy(
+                                        selectedDiary = diary,
+                                        title = diary.title,
+                                        description = diary.description,
+                                        mood = Mood.valueOf(diary.mood),
+                                    )
+                                }
                             }
                         }
                     }
-                }
+            }
         }
+
     }
 
     private fun getDiaryArgument() {
@@ -87,13 +87,26 @@ class WriteViewModel @Inject constructor(
         uiState = uiState.copy(updatedDateTime = timeStamp)
     }
 
-    fun insertDiary(
+    fun upsertDiary(
         diary: Diary,
         onSuccess: () -> Unit,
         onError: (String) -> Unit,
     ) {
         viewModelScope.launch {
-            diaryUseCases.insertDiary(diary).collect { result ->
+            if (uiState.selectedDiaryId != null) {
+                updateDiary(diary, onSuccess, onError)
+            } else {
+                insertDiary(diary, onSuccess, onError)
+            }
+        }
+    }
+
+    fun deleteDiary(
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        viewModelScope.launch {
+            diaryUseCases.deleteDiary(uiState.selectedDiaryId.toString()).collect { result ->
                 when (result) {
                     is Resource.Error -> {
                         withContext(Dispatchers.Main) {
@@ -101,10 +114,55 @@ class WriteViewModel @Inject constructor(
                         }
                     }
 
-                    is Resource.Loading -> {}
+                    is Resource.Loading<*> -> {}
                     is Resource.Success -> {
-                        onSuccess()
+                        withContext(Dispatchers.Main) {
+                            onSuccess()
+                        }
                     }
+                }
+            }
+
+        }
+    }
+
+    suspend fun insertDiary(
+        diary: Diary,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        diaryUseCases.insertDiary(diary).collect { result ->
+            when (result) {
+                is Resource.Error -> {
+                    withContext(Dispatchers.Main) {
+                        onError(result.message.toString())
+                    }
+                }
+
+                is Resource.Loading -> {}
+                is Resource.Success -> {
+                    onSuccess()
+                }
+            }
+        }
+    }
+
+    suspend fun updateDiary(
+        diary: Diary,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        diaryUseCases.updateDiary(diary).collect { result ->
+            when (result) {
+                is Resource.Error -> {
+                    withContext(Dispatchers.Main) {
+                        onError(result.message.toString())
+                    }
+                }
+
+                is Resource.Loading -> {}
+                is Resource.Success -> {
+                    onSuccess()
                 }
             }
         }

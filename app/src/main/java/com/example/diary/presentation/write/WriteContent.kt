@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -23,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,12 +56,16 @@ fun WriteContent(
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+    LaunchedEffect(scrollState.maxValue) {
+        scrollState.scrollTo(scrollState.maxValue)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
+            .navigationBarsPadding()
             .padding(
                 top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateTopPadding()
             )
             .padding(horizontal = 24.dp)
             .padding(bottom = 24.dp),
@@ -147,17 +154,32 @@ fun WriteContent(
                     .fillMaxWidth()
                     .height(54.dp),
                 onClick = {
-                    onSaveClicked(
-                        Diary(
-                            id = "",
-                            ownerId = "",
-                            mood = Mood.entries[pagerState.currentPage].name,
-                            title = uiState.title,
-                            description = uiState.description,
-                            date = uiState.updatedDateTime ?: Timestamp.now(),
-                            images = emptyList()
+                    if (uiState.selectedDiaryId == null) {
+                        onSaveClicked(
+                            Diary(
+                                id = "",
+                                ownerId = "",
+                                mood = Mood.entries[pagerState.currentPage].name,
+                                title = uiState.title,
+                                description = uiState.description,
+                                date = uiState.updatedDateTime ?: Timestamp.now(),
+                                images = emptyList()
+                            )
                         )
-                    )
+                    } else {
+                        onSaveClicked(
+                            Diary(
+                                id = uiState.selectedDiaryId,
+                                ownerId = "",
+                                mood = Mood.entries[pagerState.currentPage].name,
+                                title = uiState.title,
+                                description = uiState.description,
+                                date = uiState.updatedDateTime ?: uiState.selectedDiary!!.date,
+                                images = emptyList()
+                            )
+                        )
+                    }
+
                 },
                 shape = Shapes().small
             ) {

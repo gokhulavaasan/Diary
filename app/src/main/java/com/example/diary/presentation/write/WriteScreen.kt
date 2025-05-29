@@ -21,6 +21,7 @@ fun WriteScreen(
     onDescriptionChanged: (String) -> Unit,
     onDateTimeUpdated: (Timestamp) -> Unit,
     onSaveClicked: (Diary) -> Unit,
+    onDeleteClicked: () -> Unit,
 ) {
 
     LaunchedEffect(uiState.mood) {
@@ -34,7 +35,8 @@ fun WriteScreen(
                 moodName = moodName,
                 selectedDiary = uiState.selectedDiary,
                 onBackPressed = onBackPressed,
-                onDateTimeUpdated = onDateTimeUpdated
+                onDateTimeUpdated = onDateTimeUpdated,
+                onDeleteClicked = onDeleteClicked
             )
         }
     ) { paddingValues ->

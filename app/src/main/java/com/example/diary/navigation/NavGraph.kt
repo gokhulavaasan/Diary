@@ -210,7 +210,7 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
             onDateTimeUpdated = { viewModel.updateDateTime(timeStamp = it) },
             moodName = { Mood.entries[pagerState.currentPage].name },
             onSaveClicked = {
-                viewModel.insertDiary(
+                viewModel.upsertDiary(
                     diary = it,
                     onSuccess = {
                         onBackPressed()
@@ -221,6 +221,17 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
                             message,
                             Toast.LENGTH_SHORT
                         ).show()
+                    }
+                )
+            },
+            onDeleteClicked = {
+                viewModel.deleteDiary(
+                    onSuccess = {
+                        Toast.makeText(context, "Diary deleted", Toast.LENGTH_SHORT).show()
+                        onBackPressed()
+                    },
+                    onError = { message ->
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                     }
                 )
             }
