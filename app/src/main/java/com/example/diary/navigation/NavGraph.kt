@@ -198,6 +198,7 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
         val viewModel: WriteViewModel = hiltViewModel(navBackStackEntry)
         val context = LocalContext.current
         val uiState = viewModel.uiState
+        val galleryState = viewModel.galleryState
         val pagerState = rememberPagerState(
             pageCount = { Mood.entries.size }
         )
@@ -234,6 +235,15 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                     }
                 )
+            },
+            galleryState = galleryState,
+            onImageSelect = {
+                val type = context.contentResolver.getType(it)?.split("/")?.last() ?: "jpg"
+                Log.d("selectedImage", "URI -> $it")
+                viewModel.addImage(image = it, imageType = type)
+            },
+            onImageDeleteClicked = {
+                galleryState.removeImage(it)
             }
         )
     }

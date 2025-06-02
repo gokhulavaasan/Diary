@@ -84,10 +84,13 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.3.0")
 
 
-    // Room components
-    implementation("androidx.room:room-runtime:2.5.2")
-    // ksp("androidx.room:room-compiler:2.5.2")
-    implementation("androidx.room:room-ktx:2.5.2")
+//    // Room components
+//    implementation("androidx.room:room-runtime:2.5.2")
+//    // ksp("androidx.room:room-compiler:2.5.2")
+//    implementation("androidx.room:room-ktx:2.5.2")
+    //Room
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 
     // Runtime Compose
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")

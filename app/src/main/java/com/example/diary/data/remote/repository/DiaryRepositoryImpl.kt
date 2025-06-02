@@ -120,7 +120,8 @@ class DiaryRepositoryImpl @Inject constructor(
                                 "title" to diary.title,
                                 "description" to diary.description,
                                 "mood" to diary.mood,
-                                "date" to diary.date
+                                "date" to diary.date,
+                                "images" to diary.images
                             )
                         )
                         .await()

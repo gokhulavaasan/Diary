@@ -1,5 +1,6 @@
 package com.example.diary.presentation.write
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.diary.domain.model.Diary
+import com.example.diary.domain.model.GalleryImage
+import com.example.diary.domain.model.GalleryState
 import com.example.diary.domain.model.Mood
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
@@ -52,6 +55,9 @@ fun WriteContent(
     description: String,
     onDescriptionChanged: (String) -> Unit,
     onSaveClicked: (Diary) -> Unit,
+    galleryState: GalleryState,
+    onImageSelect: (Uri) -> Unit,
+    onImageClicked: (GalleryImage) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -148,6 +154,14 @@ fun WriteContent(
             )
         }
         Column(verticalArrangement = Arrangement.Bottom) {
+
+            GalleryUploader(
+                galleryState = galleryState,
+                onAddClicked = { focusManager.clearFocus() },
+                onImageSelect = onImageSelect,
+                onImageClicked = onImageClicked
+            )
+
             Spacer(modifier = Modifier.height(12.dp))
             Button(
                 modifier = Modifier
@@ -163,7 +177,9 @@ fun WriteContent(
                                 title = uiState.title,
                                 description = uiState.description,
                                 date = uiState.updatedDateTime ?: Timestamp.now(),
-                                images = emptyList()
+                                images = galleryState.images.map {
+                                    it.remoteImagePath
+                                }.toList()
                             )
                         )
                     } else {
@@ -175,7 +191,9 @@ fun WriteContent(
                                 title = uiState.title,
                                 description = uiState.description,
                                 date = uiState.updatedDateTime ?: uiState.selectedDiary!!.date,
-                                images = emptyList()
+                                images = galleryState.images.map {
+                                    it.remoteImagePath
+                                }.toList()
                             )
                         )
                     }

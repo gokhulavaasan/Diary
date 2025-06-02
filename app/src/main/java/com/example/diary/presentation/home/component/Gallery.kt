@@ -1,6 +1,7 @@
 package com.example.diary.presentation.home.component
 
 
+import android.net.Uri
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -25,9 +27,8 @@ import kotlin.math.max
 
 @Composable
 fun Gallery(
-    modifier: Modifier = Modifier,
-    images: List<String>,
-    imageSize: Dp = 40.dp,
+    images: List<Uri>,
+    imageSize: Dp = 60.dp,
     spaceBetween: Dp = 10.dp,
     imageShape: CornerBasedShape = Shapes().small,
 ) {
@@ -55,8 +56,9 @@ fun Gallery(
                         .data(it)
                         .crossfade(true)
                         .build(),
+                    contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.placeholder),
-                    error =  painterResource(R.drawable.placeholder) ,
+                    error = painterResource(R.drawable.placeholder),
                     contentDescription = "Gallery Image"
                 )
             }

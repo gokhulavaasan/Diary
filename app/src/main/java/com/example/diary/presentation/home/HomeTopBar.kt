@@ -1,5 +1,6 @@
 package com.example.diary.presentation.home
 
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,6 +21,8 @@ fun HomeTopBar(
     menuClicked: () -> Unit,
 ) {
     TopAppBar(
+        modifier = Modifier
+            .statusBarsPadding(),
         scrollBehavior = scrollBehavior,
         navigationIcon = {
             IconButton(
